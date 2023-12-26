@@ -1,0 +1,107 @@
+﻿<Window x:Class="CustomDialog.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomDialog"
+        mc:Ignorable="d"        
+        Title="사원정보-마스터:디테일" Height="800" Width="900">
+    <Window.DataContext>
+        <local:EmployeeViewModel/>
+    </Window.DataContext>
+    <StackPanel HorizontalAlignment="Center" Width="900">
+        <Border Height="10"/>
+        <StackPanel Orientation="Horizontal" >
+            <Label Content="사번" HorizontalContentAlignment="Center"  Width="100"/>
+            <!-- 
+                Text="{Binding EmpNo, UpdateSourceTrigger=PropertyChanged}" 
+                테스트한 결과 위와같이 구현 하게 되면, 키보드의 한글자 한글자가 입력될때 마다, 비하인드 코드의 EmpNo 가 실시간으로 변경됨.
+            
+                Text="{Binding EmpNo}" 
+                그러나, 위와같이 구현 하게 되면, 입력포커스가 Textbox 를 떠나면, 비하인드 코듸의 EmpNo 가 한꺼번에 변경됨.
+            
+                즉, 실시간으로 변경된 내용을 비하인드 코드에 알려주기 위해서는 xaml 에서 UpdateSourceTrigger=PropertyChanged 구문을 추가 해야 함.
+            -->
+            <TextBox x:Name="txtEmpno" Text="{Binding EmpNo}" Width="80" VerticalContentAlignment="Center" TextAlignment="Center"/>
+            <Border Width="20"/>
+            <Button Content="조회" Command="{Binding InquiryCommand}" Width="100" HorizontalAlignment="Left" />
+            <Border Width="480"/>
+            <Button Content="변경" Width="100" Height="30" Command="{Binding UpdateCommand}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <DataGrid x:Name="DataGrid1" Height="300" ItemsSource="{Binding Employees}"
+           AutoGenerateColumns="False" Width="300" 
+           LoadingRow="DataGrid_LoadingRow" Margin="10,10,10,10" IsSynchronizedWithCurrentItem="True" 
+           HorizontalAlignment="Center" VerticalAlignment="Center" 
+           VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedEmployee}"
+           VerticalContentAlignment="Center" HorizontalGridLinesBrush="#FFD8D2D2" VerticalGridLinesBrush="#FFC8BDBD" >
+            <DataGrid.Columns>
+                    <DataGridTextColumn Header="사번" x:Name="EmpNo" Binding="{Binding EmpNo}" Width="1*" />
+                    <DataGridTextColumn Header="성명" x:Name="Ename" Binding="{Binding Ename}" Width="1*"/>
+                    <DataGridTextColumn Header="직무" x:Name="Job" Binding="{Binding Job}" Width="1*"/>
+                    <DataGridTextColumn Header="입사일" x:Name="HireDate" Binding="{Binding HireDate}" Width="1*" Visibility="Hidden" />
+                    <DataGridTextColumn Header="급여" x:Name="Sal" Binding="{Binding Sal}" Width="1*"/>
+                    <DataGridTextColumn Header="수당" x:Name="Comm" Binding="{Binding Comm}" Width="1*"  Visibility="Hidden"/>
+            </DataGrid.Columns>
+        </DataGrid>
+            <Border DataContext="{Binding SelectedEmployee}">
+                <Grid Width="550" UseLayoutRounding="False" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                    <!-- 
+                    Text="{Binding Sal, UpdateSourceTrigger=PropertyChanged}" 
+                    테스트한 결과 위와같이 구현 하게 되면, 키보드의 한글자 한글자가 입력될때 마다, 비하인드 코드의 SelectedEmployee.Sal 값이
+                    실시간으로 변경됨. 그러므로, DataGrid 의 SelectedItem 과 바인딩 된 SelectedEmployee 값이 변경되었음을 감지한, 현재 선택된 행의
+                    급여(Sal) 의 값이 실시간으로 변경됨.
+            
+                    Text="{Binding Sal}" 
+                    그러나, 위와같이 구현 하게 되면, 입력포커스가 Textbox 를 떠나면, 비하인드 코듸의 SelectedEmployee.Sal 값이 한꺼번에 변경됨.
+                    
+                    즉, 실시간으로 변경된 내용을 비하인드 코드에 알려주기 위해서는 xaml 에서 UpdateSourceTrigger=PropertyChanged 구문을 추가 해야 함.
+                    -->
+                    
+                    <Label Content="사번" Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox x:Name="txtEmpNo" Grid.Column="1" Grid.Row="0" Height ="30" Text="{Binding EmpNo}"   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                    <Label Content="성명" Grid.Column="2" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox x:Name="txtEname"  Grid.Column="3" Grid.Row="0" Height ="30" Text="{Binding Ename, UpdateSourceTrigger=PropertyChanged}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                    <Label Content="직무" Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox x:Name="txtJob" Grid.Column="1" Grid.Row="1" Height ="30" Text="{Binding Job,UpdateSourceTrigger=PropertyChanged}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                    <Label Content="부서장" Grid.Column="2" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox x:Name="Mgr" Grid.Column="3" Grid.Row="1" Height ="30" Text="{Binding Mgr, UpdateSourceTrigger=PropertyChanged}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                    <Label Content="입사일" Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox x:Name="txtHireDate" Grid.Column="1" Grid.Row="2" Height ="30" Text="{Binding HireDate,  UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                    <Label Content="급여" Grid.Column="2" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox x:Name="txtSal" Grid.Column="3" Grid.Row="2" Height ="30" Text="{Binding Sal, UpdateSourceTrigger=PropertyChanged}"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                    <Label Content="수당" Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <TextBox x:Name="txtComm" Grid.Column="1" Grid.Row="3" Height ="30" Text="{Binding Comm, UpdateSourceTrigger=PropertyChanged}"   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                 </Grid>
+            </Border>
+        </StackPanel>
+        <StackPanel>
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Content="실행로그" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0"/>
+                <Button x:Name="ClearButton" Content="Clear" Width="100" Height="30" Command="{Binding ClearCommand}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                <ListBox x:Name="lstSql"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Logs}" SelectedItem="{Binding SelectedLog}"  Height="130" Margin="10"/>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</Window>    
